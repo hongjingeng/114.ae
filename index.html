@@ -786,12 +786,12 @@
         })();
         </script>
 
-        <!-- ==================== 优化后380x54文字广告（text-ad） ==================== -->
+        <!-- ==================== 优化后380x54文字广告（text-ad380x54） ==================== -->
 <div id="text-ad380x54" class="text-ad"></div>
 
 <script>
 (async () => {
-  const adContainer = document.getElementById('text-ad');
+  const adContainer = document.getElementById('text-ad380x54');
   
   // 显示加载中提示
   adContainer.innerHTML = `<div style="padding:12px; color:#888; font-size:14px; text-align:center;">广告加载中...</div>`;
@@ -825,51 +825,12 @@
 })();
 </script>
 
-<!-- ==================== 优化后文字广告（text-146x52） ==================== -->
+        <!-- ==================== 优化后文字广告（text-146x52） ==================== -->
 <div id="text-ad146x52" class="text-ad"></div>
 
 <script>
 (async () => {
-  const adContainer = document.getElementById('text-ad');
-  
-  // 显示加载中提示
-  adContainer.innerHTML = `<div style="padding:12px; color:#888; font-size:14px; text-align:center;">广告加载中...</div>`;
-
-  try {
-    const res = await fetch('https://ad.wemart.ae/ads?slot=text-146x52');
-    const ads = await res.json();
-
-    if (ads && ads.length > 0) {
-      let html = '<div style="padding:12px; line-height:1.8;">';
-      
-      ads.forEach(ad => {
-        html += `
-          <a href="${ad.link}" 
-             target="_blank" 
-             rel="noopener noreferrer"
-             style="color:#1e40af; margin:6px 12px; text-decoration:underline; display:inline-block;">
-            ${ad.title}
-          </a>`;
-      });
-      
-      html += '</div>';
-      adContainer.innerHTML = html;
-    } else {
-      adContainer.style.display = 'none';
-    }
-  } catch (e) {
-    console.log('文字广告加载失败', e);
-    adContainer.style.display = 'none';
-  }
-})();
-</script>
-
-        <!-- ==================== 优化后文字广告（text-146x52） ==================== -->
-<div id="text-ad" class="text-ad"></div>
-
-<script>
-(async () => {
-  const adContainer = document.getElementById('text-ad');
+  const adContainer = document.getElementById('text-ad146x52');
   
   // 显示加载中提示
   adContainer.innerHTML = `<div style="padding:12px; color:#888; font-size:14px; text-align:center;">广告加载中...</div>`;
