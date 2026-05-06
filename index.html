@@ -786,7 +786,7 @@
         })();
         </script>
                 <!-- ==================== 优化后的146x52文字广告位（移动端已修复） ==================== -->
-        <div id="ad-1200x70" class="ad-banner"></div>
+        <div id="ad-146x52" class="ad-banner"></div>
         
         <script>
         (async () => {
@@ -816,7 +816,7 @@
         })();
         </script>
                         <!-- ==================== 优化后的380x54文字广告位（移动端已修复） ==================== -->
-        <div id="ad-1200x70" class="ad-banner"></div>
+        <div id="ad-380x54" class="ad-banner"></div>
         
         <script>
         (async () => {
@@ -845,6 +845,11 @@
           }
         })();
         </script>
+        <!-- 嵌入代码 -->
+<div id="ad"></div>
+<script>
+fetch('https://ad.wemart.ae/ads?slot=text-146x52').then(r=>r.json()).then(ads=>{if(ads[0])document.getElementById('ad').innerHTML=`<a href="${ads[0].link}" target="_blank"><img src="${ads[0].image_url}" style="width:100%;max-width:1200px;height:auto;"></a>`;});
+</script>
         
         <!-- 全网盘搜 Tab -->
         <div id="search-content">
