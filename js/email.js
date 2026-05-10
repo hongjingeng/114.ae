@@ -19,7 +19,7 @@ window.initEmail = function() {
             <div style="margin:15px 0;">
                 <select id="emailServiceSelect" onchange="switchEmailService()" style="padding:10px 18px;border-radius:50px;border:2px solid var(--accent-color);background:var(--card-bg);">
                     <option value="mailtm">Mail.tm（推荐·稳定）</option>
-                    <option value="duckmail">DuckMail</option>
+                    <option value="duckmail">DuckMail（duckmail.sbs）</option>
                 </select>
             </div>
 
@@ -49,8 +49,8 @@ window.switchEmailService = function() {
 
 async function initCurrentEmailService() {
     if (pollTimer) clearInterval(pollTimer);
-    if (currentService === 'mailtm') await initMailTM();
-    else await initDuckMail();
+    if (currentService === 'mailtm') initMailTM();
+    else initDuckMail();
 }
 
 async function initMailTM() {
@@ -64,31 +64,23 @@ async function initMailTM() {
         const pass = Math.random().toString(36).substring(2, 15) + "A1";
         const address = `${user}@${domain}`;
 
-        await fetch(`${MAILTM_API}/accounts`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({address, password: pass})
-        });
+        await fetch(`${MAILTM_API}/accounts`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address, password: pass}) });
 
-        const tokenRes = await fetch(`${MAILTM_API}/token`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({address, password: pass})
-        });
+        const tokenRes = await fetch(`${MAILTM_API}/token`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({address, password: pass}) });
         const tokenData = await tokenRes.json();
         currentAccount = {address, token: tokenData.token};
 
         addrEl.innerText = currentAccount.address;
         pollTimer = setInterval(fetchMailTMMessages, 5000);
     } catch(e) {
-        addrEl.innerText = "❌ 生成失败，请重试";
+        addrEl.innerText = "❌ Mail.tm 生成失败";
     }
 }
 
 async function fetchMailTMMessages() {
     if (!currentAccount.token) return;
     try {
-        const res = await fetch(`${MAILTM_API}/messages`, {
-            headers: {'Authorization': `Bearer ${currentAccount.token}`}
-        });
+        const res = await fetch(`${MAILTM_API}/messages`, { headers: {'Authorization': `Bearer ${currentAccount.token}`} });
         const data = await res.json();
         const msgs = data['hydra:member'] || [];
         const listEl = document.getElementById('list');
@@ -98,7 +90,7 @@ async function fetchMailTMMessages() {
         }
         listEl.innerHTML = msgs.map(m => `
             <div class="msg-item" onclick="readMail('${m.id}', '${escapeHtml(m.subject || '无主题')}')">
-                <div class="msg-meta">来自: ${escapeHtml(m.from ? m.from.address : '未知')} | ${new Date(m.createdAt).toLocaleTimeString('zh-CN')}</div>
+                <div class="msg-meta">来自: ${escapeHtml(m.from?.address || '未知')} | ${new Date(m.createdAt).toLocaleTimeString('zh-CN')}</div>
                 <div class="msg-subject">${escapeHtml(m.subject || '（无主题）')}</div>
             </div>
         `).join('');
@@ -106,9 +98,7 @@ async function fetchMailTMMessages() {
 }
 
 window.readMail = async function(id, subject) {
-    const modal = document.getElementById('mailModal') || createModal();
-    // 简化版：实际可扩展
-    alert(`邮件主题: ${subject}\n\n（完整邮件详情弹窗可后续扩展）`);
+    alert(`邮件主题：${subject}\n\n（完整弹窗可后续扩展）`);
 };
 
 async function initDuckMail() {
@@ -119,14 +109,9 @@ async function initDuckMail() {
 
 window.copyMail = function() {
     const val = document.getElementById('addr').innerText;
-    if (val.includes('@')) navigator.clipboard.writeText(val).then(() => alert('✅ 已复制'));
+    if (val.includes('@')) navigator.clipboard.writeText(val).then(() => alert('✅ 复制成功！'));
 };
 
 function escapeHtml(str) {
     return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-}
-
-// 创建邮件弹窗（如果需要）
-function createModal() {
-    // 可按需扩展
 }
