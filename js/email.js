@@ -13,13 +13,13 @@ window.initEmail = function() {
     <div id="email-content">
         <div class="search-header">
             <div class="avatar-wrapper"><div class="avatar">🛸</div></div>
-            <h1>114.ae 临时邮箱</h1>
-            <p class="sub">支持验证码 · 多服务切换</p>
+            <h1>114.ae跨境</h1>
+            <p class="sub">临时邮箱 · 支持验证码 · 多服务切换</p>
             
             <div style="margin:15px 0;">
                 <select id="emailServiceSelect" onchange="switchEmailService()" style="padding:10px 18px;border-radius:50px;border:2px solid var(--accent-color);background:var(--card-bg);">
                     <option value="mailtm">Mail.tm（推荐·稳定）</option>
-                    <option value="duckmail">DuckMail</option>
+                    <option value="duckmail">DuckMail（duckmail.sbs）</option>
                 </select>
             </div>
 
@@ -44,14 +44,15 @@ window.initEmail = function() {
 
 window.switchEmailService = function() {
     currentService = document.getElementById('emailServiceSelect').value;
+    document.getElementById('list').innerHTML = '<div style="text-align: center; padding: 60px; color: var(--text-secondary);">切换服务中...</div>';
     initCurrentEmailService();
 };
 
-async function initCurrentEmailService() {
+window.initCurrentEmailService = function() {
     if (pollTimer) clearInterval(pollTimer);
     if (currentService === 'mailtm') initMailTM();
-    else initDuckMail();
-}
+    else if (currentService === 'duckmail') initDuckMail();
+};
 
 async function initMailTM() {
     const addrEl = document.getElementById('addr');
@@ -79,9 +80,10 @@ async function initMailTM() {
         currentAccount = {address, token: tokenData.token};
 
         addrEl.innerText = currentAccount.address;
+        document.getElementById('list').innerHTML = '<div style="text-align: center; padding: 60px; color: var(--text-secondary);">🚀 Mail.tm 已就绪，正在监听...</div>';
         pollTimer = setInterval(fetchMailTMMessages, 5000);
     } catch(e) {
-        addrEl.innerText = "❌ 生成失败，请重试";
+        addrEl.innerText = "❌ Mail.tm 生成失败，请重试";
     }
 }
 
@@ -109,23 +111,40 @@ async function fetchMailTMMessages() {
 
 window.readMail = async function(id, subject) {
     const modal = document.getElementById('mailModal');
-    document.getElementById('modalSubject').innerText = subject;
-    document.getElementById('modalBody').innerHTML = '加载中...';
+    const mBody = document.getElementById('modalBody');
+    const mSub = document.getElementById('modalSubject');
+    mSub.innerText = subject;
+    mBody.innerHTML = '加载详情中...';
     modal.style.display = 'flex';
-    // 简化版，实际可扩展
+    try {
+        const res = await fetch(`${MAILTM_API}/messages/${id}`, {
+            headers: {'Authorization': `Bearer ${currentAccount.token}`}
+        });
+        const data = await res.json();
+        mBody.innerHTML = data.html || `<pre style="white-space:pre-wrap; font-family: monospace;">${data.text || '无正文'}</pre>`;
+    } catch(e) {
+        mBody.innerHTML = '加载失败，请稍后重试';
+    }
 };
 
 async function initDuckMail() {
-    document.getElementById('addr').innerText = DUCK_EMAIL;
+    const addrEl = document.getElementById('addr');
+    addrEl.innerText = DUCK_EMAIL;
+    document.getElementById('list').innerHTML = '<div style="text-align: center; padding: 60px; color: var(--text-secondary);">🚀 DuckMail 已就绪，正在监听...</div>';
 }
-
-window.copyMail = function() {
-    const val = document.getElementById('addr').innerText;
-    if (val.includes('@')) navigator.clipboard.writeText(val).then(() => alert('✅ 已复制'));
-};
 
 window.closeMail = function() {
     document.getElementById('mailModal').style.display = 'none';
+};
+
+window.copyMail = function() {
+    const val = document.getElementById('addr').innerText;
+    if (val.includes('@')) navigator.clipboard.writeText(val).then(() => alert('✅ 复制成功！'));
+};
+
+window.copyEmailContent = function() {
+    const content = document.getElementById('modalBody').innerText;
+    navigator.clipboard.writeText(content).then(() => alert('✅ 邮件全文已复制'));
 };
 
 function escapeHtml(str) {
