@@ -30,17 +30,31 @@
     <div class="theme-toggle" id="themeToggle">🌙</div>
 
     <div class="container">
-        <!-- Tab 切换栏 -->
+        <!-- Tab 栏 -->
         <div class="tab-bar" id="tabBar"></div>
 
-        <!-- 图片广告（保持原位置） -->
+        <!-- 图片广告（原始位置） -->
         <div id="ad-1200x70" class="ad-banner"></div>
 
-        <!-- 文字广告区域（优化位置） -->
-        <div id="text-ads" style="margin:20px 0; text-align:center;"></div>
+        <!-- 文字广告区域 -->
+        <div id="text-ads" style="margin:20px 0; text-align:center; padding:12px; background:var(--card-bg); border-radius:12px; border:1px solid var(--border-color);"></div>
 
         <!-- 动态内容容器 -->
         <div id="contentContainer"></div>
+    </div>
+
+    <!-- 邮件弹窗 -->
+    <div id="mailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modalSubject" style="font-weight:bold;font-size:1.1rem;">邮件详情</span>
+                <button class="close-btn" onclick="closeMail()">关闭</button>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+            <div class="modal-footer">
+                <button onclick="copyEmailContent()" class="btn btn-s">📋 复制全文</button>
+            </div>
+        </div>
     </div>
 
     <!-- 页脚 -->
